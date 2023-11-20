@@ -1,6 +1,7 @@
 import {
   Button,
   HStack,
+  Heading,
   Image,
   List,
   ListItem,
@@ -14,12 +15,12 @@ interface Props {
   selectedGenre: Genre | null;
 }
 
-const truncateGenreName = (name: string) => {
-  if (name.length > 13) {
-    return name.slice(0, 10) + "...";
-  }
-  return name;
-};
+// const truncateGenreName = (name: string) => {
+//   if (name.length > 13) {
+//     return name.slice(0, 10) + "...";
+//   }
+//   return name;
+// };
 
 const GenreList = ({ selectedGenre, onSelectedGenre }: Props) => {
   const { data, loading } = useGenres();
@@ -28,39 +29,47 @@ const GenreList = ({ selectedGenre, onSelectedGenre }: Props) => {
   ];
 
   return (
-    <List>
-      {loading &&
-        skeleton.map((skeletonId) => (
-          <ListItem key={`skeleton-${skeletonId}`} paddingY={"5px"}>
+    <>
+      <Heading marginBottom={5} marginTop={4} fontSize={"3xl"}>
+        {" "}
+        Genres{" "}
+      </Heading>
+      <List>
+        {loading &&
+          skeleton.map((skeletonId) => (
+            <ListItem key={`skeleton-${skeletonId}`} paddingY={"5px"}>
+              <HStack>
+                <Skeleton borderRadius={8} boxSize={"32px"} />
+                <Skeleton height="20px" width="100px" />
+              </HStack>
+            </ListItem>
+          ))}
+        {data.map((genre) => (
+          <ListItem key={genre.id} paddingY={"5px"}>
             <HStack>
-              <Skeleton borderRadius={8} boxSize={"32px"} />
-              <Skeleton height="20px" width="100px" />
+              <Image
+                src={getCroppedImageUrl(genre.image_background)}
+                borderRadius={8}
+                boxSize={"32px"}
+              />
+              <Button
+                _hover={{
+                  textDecoration: "underline",
+                }}
+                fontWeight={genre.id === selectedGenre?.id ? "bold" : "normal"}
+                onClick={() => onSelectedGenre(genre)}
+                fontSize={"lg"}
+                variant={"link"}
+                whiteSpace={"normal"}
+                textAlign={"left"}
+              >
+                {genre.name}
+              </Button>
             </HStack>
           </ListItem>
         ))}
-      {data.map((genre) => (
-        <ListItem key={genre.id} paddingY={"5px"}>
-          <HStack>
-            <Image
-              src={getCroppedImageUrl(genre.image_background)}
-              borderRadius={8}
-              boxSize={"32px"}
-            />
-            <Button
-              _hover={{
-                textDecoration: "underline",
-              }}
-              fontWeight={genre.id === selectedGenre?.id ? "bold" : "normal"}
-              onClick={() => onSelectedGenre(genre)}
-              fontSize={"lg"}
-              variant={"link"}
-            >
-              {truncateGenreName(genre.name)}
-            </Button>
-          </HStack>
-        </ListItem>
-      ))}
-    </List>
+      </List>
+    </>
   );
 };
 
